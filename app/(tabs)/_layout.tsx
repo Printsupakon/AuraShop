@@ -3,7 +3,7 @@ import React from "react"
 // import Octicons from "@expo/vector-icons/Octicons"
 import { Tabs } from "expo-router"
 import { icons } from "@/constants"
-import { View, Image, Text } from "react-native"
+import { View, Image } from "react-native"
 
 // function TabBarIcon(props: {
 //   name: React.ComponentProps<typeof Octicons>["name"]

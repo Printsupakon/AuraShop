@@ -1,8 +1,11 @@
 // Import your global CSS file
-import "../global.css";
-import { useEffect } from "react";
+import "../global.css"
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
+import { useEffect } from "react"
 import { Stack } from 'expo-router'
 import { useFonts } from 'expo-font'
+import { useColorScheme, StatusBar } from 'react-native'
+import { View } from "@/components/Themed"
 
 export default function RootLayout() {
 
@@ -26,11 +29,21 @@ export default function RootLayout() {
   if (!fontsLoaded) return null
   if(!fontsLoaded && !error) return null
 
-  return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name='(auth)' options={{ headerShown: false }} />
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-    </Stack>
+  return <RootLayoutNav />
+}
+
+function RootLayoutNav() {
+  const colorScheme = useColorScheme();
+  return(
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <View className="h-screen">
+        <StatusBar className={colorScheme === 'dark' ? 'bg-black text-white': 'bg-white text-black'} />
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+        </Stack>
+      </View>
+    </ThemeProvider>
   )
 }

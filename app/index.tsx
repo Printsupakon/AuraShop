@@ -1,41 +1,91 @@
-import React from "react"
-import { Redirect, router } from "expo-router"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { View, Text, ScrollView, Image } from "react-native"
-import {images} from '@/constants'
-import CustomButton from "@/components/CustomButton"
-import { useRouter } from "expo-router"
+import { Redirect } from 'expo-router'
+import React, { useEffect, useState } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import CustomButton from '@/components/CustomButton'
+import { ScrollView, View, Image, Text } from 'react-native'
+import { images } from "@/constants"
+import { router } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function Index() {
-  const router = useRouter ()
+
+  // สร้างตัวแปร state เช็คสถานะการ login
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isIntialized, setIntializaed] = useState(false);
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
+        console.log('isLoggedIn:', isLoggedIn);
+        if (isLoggedIn === 'true') {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error('Failed to check login status:', error);
+      } finally {
+        setIntializaed(true);
+      }
+    };
+
+    initialize()
+  }, [])
+
+  if (!isIntialized) return null
   return (
-    <Redirect href={"/(tabs)/home"} />
-  //  <SafeAreaView className="bg-gray-900 h-full">
-  //   <ScrollView contentContainerStyle={{ height: "100%"}}>
-  //       <View className=" w-full flex justify-center items-center h-full px-4 ">
-  //           <Image source={images.logo} className="h-[84px]" resizeMode="contain" />
-  //           <Image source={images.cards} className="max-w-[380px] w-full h-[300px]" resizeMode="contain" />
-  //           <View className="relative mt-5 ">
-  //               <Text className=" text-3xl text-white font-bold text-center ">
-  //                   Lorem ipsum dolor sit {"\n"}  amet Aurashop 
-  //                   <Text className=" text-orange-300 "> AuraShop.</Text>
-  //               </Text>
-  //               <Image source={images.path} className="w-[150px] h-[15px] absolute -bottom-3 -right-8 " resizeMode="contain" />
-  //           </View>
-  //           <Text className=" text-sm  text-white mt-7 text-center " > Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque cupiditate soluta officia est totam, error </Text>
+    <>
+      { isLoggedIn &&  <Redirect href="/(tabs)/home" /> }
+      { 
+        !isLoggedIn && <SafeAreaView className="bg-primary h-full">
+        <ScrollView contentContainerStyle={{height: '100%'}}>
+          <View className="w-full flex justify-center items-center h-full px-8">
+            
+            {/* LOGO */}
+            <Image
+              source={images.logo}
+              className="h-[84px]"
+              resizeMode="contain"
+            />
 
-  //           <CustomButton  
-  //           title="Continue with Email"
-  //           handlePress={() => { 
-  //           router.push("/(auth)/login");
-  //           }}
-  //           containerStyles="w-full mt-7 "
-  //         />
+            {/* Card Image */}
+            <Image
+              source={images.cards}
+              className="max-w-[380px] w-full h-[298px]"
+              resizeMode="contain"
+            />
 
-  //       </View>
-  //   </ScrollView>
-  //  </SafeAreaView>
+            {/* Slogan */}
+            <View className="relative mt-5">
+              <Text className="text-2xl text-white font-bold text-center">
+                Discover Endless{"\n"}
+                Possibilities with{" "}
+                <Text className="text-secondary-200">AuraShop</Text>
+              </Text>
+              <Image
+                source={images.path}
+                className="w-[120px] h-[15px] absolute -bottom-4 -right-8"
+                resizeMode="contain"
+              />
+            </View>
 
+            {/* Description */}
+            <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
+              Where Creativity Meets Innovation: Embark on a Journey of Limitless
+              Exploration with Aora
+            </Text>
+
+            {/* Button */}
+            <CustomButton
+              title="Continue with Email"
+              handlePress={() => { 
+                router.push("/login")
+              }}
+              containerStyles="w-full mt-7"
+            />
+
+          </View>
+        </ScrollView>
+        </SafeAreaView> 
+      }
+    </>
   )
 }
-
